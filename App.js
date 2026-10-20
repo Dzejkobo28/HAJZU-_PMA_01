@@ -1,18 +1,43 @@
-import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
+import { Button, StyleSheet, TextInput, View, FlatList } from "react-native";
+import TaskItem from "./src/components/TaskItem";
 
 export default function App() {
+  const [text, setText] = useState("");
+  const [taskList, setTaskList] = useState([]);
+
+  function handleInputText(text) {
+    setText(text);
+  }
+
+  function handleAddItem() {
+    if (text.trim() !== "") {
+      setTaskList([...taskList, text]);
+      setText("");
+    }
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.inputcontainer}>
-       <TextInput style={styles.input}
-       placeholder="Zadajte úlohu" />
-      <Button title="ADD" />
+      <View style={styles.inputContainer}>
+        <TextInput
+          value={text}
+          onChangeText={handleInputText}
+          style={styles.input}
+          placeholder="Zadaj úlohu..."
+        />
+
+        <Button onPress={handleAddItem} title="ADD" />
       </View>
-      <View style={styles.taskcontainer}>
-      <Text style={styles.text}>UDALOSTI</Text>
+
+      <FlatList
+        data={taskList}
+        renderItem={({ item }) => <TaskItem task={item} />}
+        keyExtractor={(item) => item.id}
+      />
+
       <StatusBar style="auto" />
-      </View>
     </View>
   );
 }
@@ -20,10 +45,17 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
-  input:{borderWidth:3,width:"80%",borderRadius:8},
-  inputcontainer: {flex: 1,flexDirection:"row",justifyContent:"space-between",alignItems:"center",paddingHorizontal:"10"},
-  taskcontainer: {flex: 3,borderTopWidth:3,margin:20},
-  text:{padding:20},
+  inputContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+  input: {
+    borderWidth: 3,
+    width: "80%",
+    borderRadius: 8,
+  },
 });
